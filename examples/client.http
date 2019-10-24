@@ -1,0 +1,7 @@
+POST http://localhost:3500/v1.0/invoke/client/method/MyMethod
+
+{
+  "data": {
+    "hello": "world"
+  }
+}
