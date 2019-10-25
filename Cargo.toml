@@ -1,10 +1,15 @@
 [package]
 name = "dapr"
-version = "0.1.0"
+version = "0.1.0-alpha.1"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+repository = "https://github.com/flier/rust-dapr"
+homepage = "https://github.com/flier/rust-dapr"
+description = "Dapr SDK for Rust"
+readme = "README.md"
+categories = ["api-bindings", "asynchronous"]
+keywords = ["microservice"]
 
 [features]
 default = ["json"]
@@ -13,16 +18,19 @@ json = ["serde", "serde_json"]
 [dependencies]
 cfg-if = "0.1"
 bytes = "0.4"
-tonic = { git = "https://github.com/hyperium/tonic.git" }
+
+tonic = "0.1.0-alpha.4"
 prost = "0.5"
 prost-types = "0.5"
 prost-derive = "0.5"
 
-serde = { version = "1.0", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
+
+dapr-derive = { version = "0.1.0-alpha.1", path = "derive" }
 
 [dev-dependencies]
 tokio = "0.2.0-alpha.6"
 
 [build-dependencies]
-tonic-build = { git = "https://github.com/hyperium/tonic.git" }
+tonic-build = "0.1.0-alpha.4"

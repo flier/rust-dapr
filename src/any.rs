@@ -201,6 +201,15 @@ pub mod protobuf {
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "json")] {
+        impl IntoAny for serde_json::Value {
+            fn into_any(self) -> Option<Any> {
+                serde_json::to_vec(&self).ok().map(|value| Any {
+                    value,
+                    type_url: format!("{}/JSON", RUST_LANG_URL),
+                })
+            }
+        }
+
         /// Serialize the given data structure as a JSON text.
         pub fn json<T: ?Sized>(value: &T) -> Option<Any>
         where

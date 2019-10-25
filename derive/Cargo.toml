@@ -1,0 +1,21 @@
+[package]
+name = "dapr-derive"
+version = "0.1.0-alpha.1"
+authors = ["Flier Lu <flier.lu@gmail.com>"]
+edition = "2018"
+license = "MIT"
+repository = "https://github.com/flier/rust-dapr"
+homepage = "https://github.com/flier/rust-dapr"
+description = "Dapr SDK for Rust"
+readme = "../README.md"
+categories = ["api-bindings", "asynchronous"]
+keywords = ["microservice"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "1.0", features = ["full", "visit-mut"] }
+case = "1.0"

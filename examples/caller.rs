@@ -1,4 +1,5 @@
 use dapr::Unpack;
+use serde_json::json;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -10,7 +11,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = dapr::connect(addr)?;
 
     // Invoke a method called MyMethod on another Dapr enabled service with id client
-    let (res, _) = client.invoke_service("client", "MyMethod", "Hello").await?;
+    let (res, _) = client
+        .invoke_service("client", "my_method", json!({"name": "world"}))
+        .await?;
 
     println!("{:?}", res.unwrap().unpack::<String>()?);
 
