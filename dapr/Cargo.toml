@@ -7,7 +7,7 @@ license = "MIT"
 repository = "https://github.com/flier/rust-dapr"
 homepage = "https://github.com/flier/rust-dapr"
 description = "Dapr SDK for Rust"
-readme = "README.md"
+readme = "../README.md"
 categories = ["api-bindings", "asynchronous"]
 keywords = ["microservice"]
 
