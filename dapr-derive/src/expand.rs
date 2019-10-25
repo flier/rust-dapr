@@ -22,7 +22,7 @@ impl ToTokens for Item {
     }
 }
 
-pub fn expand(item: &mut Item, args: Args) {}
+pub fn expand(_item: &mut Item, _args: Args) {}
 
 fn dapr_client(item: &ItemTrait) -> TokenStream {
     let syn::ItemTrait { ident, items, .. } = item;

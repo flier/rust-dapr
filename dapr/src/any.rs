@@ -174,7 +174,7 @@ pub mod protobuf {
     use prost_types::Any;
 
     /// Deserialize an instance of type T from Protobuf message.
-    pub fn unpack<'a, T>(any: &'a Any) -> Result<T, prost::DecodeError>
+    pub fn unpack<T>(any: &Any) -> Result<T, prost::DecodeError>
     where
         T: prost::Message + Default,
     {

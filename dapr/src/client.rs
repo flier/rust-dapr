@@ -1,3 +1,5 @@
+#![allow(clippy::module_inception)]
+
 //! The Dapr client interface.
 
 tonic::include_proto!("daprclient");

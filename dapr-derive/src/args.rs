@@ -13,7 +13,7 @@ impl Parse for Args {
     }
 }
 
-fn try_parse(input: ParseStream) -> Result<Args> {
+fn try_parse(_input: ParseStream) -> Result<Args> {
     Ok(Args {})
 }
 
