@@ -1,3 +1,7 @@
+//! Dapr is a portable, event-driven, serverless runtime for building distributed applications across cloud and edge.
+//!
+//! This is the Dapr SDK for Rust, based on the auto-generated protobuf client.
+
 pub extern crate prost_types;
 pub extern crate tonic;
 
