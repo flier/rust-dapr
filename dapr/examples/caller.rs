@@ -1,5 +1,9 @@
 use dapr::Unpack;
-use serde_json::json;
+
+#[dapr::stub]
+pub trait MyService {
+    fn my_method(&mut self, name: String) -> String;
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -10,12 +14,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create the client
     let mut client = dapr::connect(addr)?;
 
-    // Invoke a method called MyMethod on another Dapr enabled service with id client
-    let (res, _) = client
-        .invoke_service("client", "my_method", json!({"name": "world"}))
-        .await?;
+    let res = {
+        let mut stub = MyServiceStub::new(&mut client, "client");
 
-    println!("{:?}", res.unwrap().unpack::<String>()?);
+        stub.my_method("world".to_owned()).await?
+    };
+
+    println!("{:?}", res);
 
     // Publish a message to the topic TopicA
     client.publish_event("TopicA", "Hi from Pub Sub").await?;

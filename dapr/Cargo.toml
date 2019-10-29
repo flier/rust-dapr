@@ -19,6 +19,7 @@ json = ["serde", "serde_json"]
 cfg-if = "0.1"
 thiserror = "1.0"
 bytes = "0.4"
+async-trait = "0.1"
 
 tonic = "0.1.0-alpha.4"
 prost = "0.5"

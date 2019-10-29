@@ -225,6 +225,13 @@ cfg_if::cfg_if! {
         pub mod json{
             use prost_types::Any;
 
+            pub fn pack<T: ?Sized>(value: &T) -> Result<serde_json::Value, serde_json::error::Error>
+            where
+                T: serde::Serialize,
+            {
+                serde_json::to_value(value)
+            }
+
             /// Deserialize an instance of type T from JSON text.
             pub fn unpack<'a, T>(any: &'a Any) -> Result<T, serde_json::error::Error>
             where

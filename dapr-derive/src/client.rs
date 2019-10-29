@@ -1,30 +1,9 @@
 use case::CaseExt;
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens, TokenStreamExt};
+use quote::{format_ident, quote};
 use syn::{Ident, ItemTrait, TraitItem};
 
-use crate::args::Args;
-use crate::parse::Item;
-
-impl ToTokens for Item {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        match self {
-            Item::Trait(item) => {
-                item.to_tokens(tokens);
-
-                let expanded = dapr_client(item);
-
-                // println!("{}", quote!(#expanded));
-
-                tokens.append_all(expanded)
-            }
-        }
-    }
-}
-
-pub fn expand(_item: &mut Item, _args: Args) {}
-
-fn dapr_client(item: &ItemTrait) -> TokenStream {
+pub fn dapr_client(item: &ItemTrait) -> TokenStream {
     let syn::ItemTrait { ident, items, .. } = item;
     let trait_name = &ident;
     let client_name = format_ident!("{}Client", trait_name);
@@ -143,7 +122,7 @@ fn dapr_client(item: &ItemTrait) -> TokenStream {
     }
 }
 
-fn arg_types<'a>(
+pub fn arg_types<'a>(
     trait_name: &Ident,
     methods: impl Iterator<Item = &'a syn::TraitItemMethod>,
 ) -> TokenStream {
@@ -158,7 +137,7 @@ fn arg_types<'a>(
         });
 
         quote! {
-            #[derive(Default, ::serde::Deserialize)]
+            #[derive(Default, ::dapr::serde::Serialize, ::dapr::serde::Deserialize)]
             struct #name { #(#fields),* }
         }
     });
@@ -168,7 +147,7 @@ fn arg_types<'a>(
     }
 }
 
-fn result_types<'a>(
+pub fn result_types<'a>(
     trait_name: &Ident,
     methods: impl Iterator<Item = &'a syn::TraitItemMethod>,
 ) -> TokenStream {
@@ -180,7 +159,7 @@ fn result_types<'a>(
         };
 
         quote! {
-            #[derive(Default, ::serde::Serialize)]
+            #[derive(Default, ::dapr::serde::Serialize, ::dapr::serde::Deserialize)]
             struct #name((#output));
         }
     });
@@ -265,7 +244,7 @@ fn invoke_method(trait_name: &Ident, method: &syn::TraitItemMethod) -> TokenStre
     }
 }
 
-fn arg_type_name(trait_name: &Ident, method: &syn::TraitItemMethod) -> Ident {
+pub fn arg_type_name(trait_name: &Ident, method: &syn::TraitItemMethod) -> Ident {
     format_ident!(
         "{}{}Args",
         trait_name,
@@ -273,9 +252,9 @@ fn arg_type_name(trait_name: &Ident, method: &syn::TraitItemMethod) -> Ident {
     )
 }
 
-fn result_type_name(trait_name: &Ident, method: &syn::TraitItemMethod) -> Ident {
+pub fn result_type_name(trait_name: &Ident, method: &syn::TraitItemMethod) -> Ident {
     format_ident!(
-        "{}{}Res",
+        "{}{}Result",
         trait_name,
         method.sig.ident.to_string().to_camel()
     )

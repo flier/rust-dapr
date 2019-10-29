@@ -12,4 +12,8 @@ pub enum Error {
     /// gRPC status
     #[error("gRPC status")]
     Grpc(#[from] tonic::Status),
+
+    /// JSON error
+    #[error("JSON error")]
+    Json(#[from] serde_json::error::Error),
 }
