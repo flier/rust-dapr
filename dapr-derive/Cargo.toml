@@ -1,6 +1,6 @@
 [package]
 name = "dapr-derive"
-version = "0.1.0-alpha.1"
+version = "0.1.0-alpha.2"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
 edition = "2018"
 license = "MIT"
