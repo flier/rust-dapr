@@ -2,14 +2,19 @@
 //!
 //! This is the Dapr SDK for Rust, based on the auto-generated protobuf client.
 
+#[doc(hidden)]
 pub extern crate prost_types;
+#[doc(hidden)]
 pub extern crate tonic;
 
 pub mod any;
 pub mod client;
+mod error;
 pub mod runtime;
 
 pub use dapr_derive::service;
+
+pub use error::Error;
 
 #[cfg(feature = "json")]
 #[doc(inline)]

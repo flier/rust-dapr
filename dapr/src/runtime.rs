@@ -6,10 +6,13 @@ use std::convert::{AsMut, AsRef};
 use prost_types::Any;
 use tonic::{
     codegen::{Body, HttpBody, StdError},
-    Request, Status,
+    Request,
 };
 
-use crate::any::IntoAny;
+use crate::{
+    any::IntoAny,
+    error::{Error, Result},
+};
 
 tonic::include_proto!("dapr");
 
@@ -32,12 +35,14 @@ impl<T> AsMut<client::DaprClient<T>> for Runtime<T> {
 }
 
 /// Opens a gRPC connection to a Dapr runtime.
-pub fn connect<D>(dst: D) -> Result<Runtime<tonic::transport::Channel>, tonic::transport::Error>
+pub fn connect<D>(dst: D) -> Result<Runtime<tonic::transport::Channel>>
 where
     D: std::convert::TryInto<tonic::transport::Endpoint>,
     D::Error: Into<StdError>,
 {
-    client::DaprClient::connect(dst).map(Runtime)
+    client::DaprClient::connect(dst)
+        .map(Runtime)
+        .map_err(Error::from)
 }
 
 impl<T> Runtime<T>
@@ -49,8 +54,8 @@ where
     <T::ResponseBody as HttpBody>::Data: Into<bytes::Bytes> + Send,
 {
     /// Check if the service is ready.
-    pub async fn ready(&mut self) -> Result<(), tonic::Status> {
-        self.0.ready().await
+    pub async fn ready(&mut self) -> Result<()> {
+        self.0.ready().await.map_err(Error::from)
     }
 
     /// Invoke a method in a Dapr enabled app.
@@ -59,7 +64,7 @@ where
         app_id: I,
         method_name: M,
         data: D,
-    ) -> Result<(Option<Any>, Metadata), Status>
+    ) -> Result<(Option<Any>, Metadata)>
     where
         I: Into<String>,
         M: Into<String>,
@@ -78,10 +83,11 @@ where
 
                 (data, metadata)
             })
+            .map_err(Error::from)
     }
 
     /// Invoke an Dapr output binding.
-    pub async fn invoke_binding<S, D>(&mut self, name: S, data: D) -> Result<(), Status>
+    pub async fn invoke_binding<S, D>(&mut self, name: S, data: D) -> Result<()>
     where
         S: Into<String>,
         D: IntoAny,
@@ -94,12 +100,13 @@ where
             }))
             .await
             .map(|res| res.into_inner())
+            .map_err(Error::from)
     }
 
     /// Publish a payload to multiple consumers who are listening on a topic.
     ///
     /// Dapr guarantees at least once semantics for this endpoint.
-    pub async fn publish_event<S, D>(&mut self, topic: S, data: D) -> Result<(), Status>
+    pub async fn publish_event<S, D>(&mut self, topic: S, data: D) -> Result<()>
     where
         S: Into<String>,
         D: IntoAny,
@@ -111,10 +118,11 @@ where
             }))
             .await
             .map(|res| res.into_inner())
+            .map_err(Error::from)
     }
 
     /// Get the state for a specific key.
-    pub async fn get_state<S>(&mut self, key: S) -> Result<(Option<Any>, String), Status>
+    pub async fn get_state<S>(&mut self, key: S) -> Result<(Option<Any>, String)>
     where
         S: Into<String>,
     {
@@ -129,10 +137,11 @@ where
 
                 (data, etag)
             })
+            .map_err(Error::from)
     }
 
     /// Save an array of state objects.
-    pub async fn save_state<I, S>(&mut self, requests: I) -> Result<(), Status>
+    pub async fn save_state<I, S>(&mut self, requests: I) -> Result<()>
     where
         I: IntoIterator<Item = S>,
         S: Into<StateRequest>,
@@ -143,10 +152,11 @@ where
             }))
             .await
             .map(|res| res.into_inner())
+            .map_err(Error::from)
     }
 
     /// Delete the state for a specific key.
-    pub async fn delete_state<S>(&mut self, key: S) -> Result<(), Status>
+    pub async fn delete_state<S>(&mut self, key: S) -> Result<()>
     where
         S: Into<String>,
     {
@@ -157,6 +167,7 @@ where
             }))
             .await
             .map(|res| res.into_inner())
+            .map_err(Error::from)
     }
 }
 

@@ -17,6 +17,7 @@ json = ["serde", "serde_json"]
 
 [dependencies]
 cfg-if = "0.1"
+thiserror = "1.0"
 bytes = "0.4"
 
 tonic = "0.1.0-alpha.4"
