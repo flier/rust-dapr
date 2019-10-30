@@ -98,7 +98,38 @@ pub fn invoke_method(trait_name: &Ident, method: &syn::TraitItemMethod) -> Token
     }
 }
 
-pub fn output_type(output: &syn::ReturnType) -> syn::ReturnType {
+pub fn async_trait(item: syn::ItemTrait) -> TokenStream {
+    let syn::ItemTrait {
+        attrs,
+        vis,
+        ident,
+        generics,
+        colon_token,
+        supertraits,
+        mut items,
+        ..
+    } = item;
+    let (_impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    let items = items.iter_mut().map(|item| {
+        if let syn::TraitItem::Method(ref mut method) = item {
+            method.sig.output = output_type(&method.sig.output);
+
+            quote! { async #method }
+        } else {
+            quote! { #item }
+        }
+    });
+
+    quote! {
+        #[::dapr::async_trait]
+        #(#attrs)* #vis trait #ident #ty_generics #colon_token #supertraits #where_clause {
+            #(#items)*
+        }
+    }
+}
+
+fn output_type(output: &syn::ReturnType) -> syn::ReturnType {
     match output {
         syn::ReturnType::Default => {
             parse_quote! {
