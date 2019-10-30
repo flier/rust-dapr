@@ -5,6 +5,7 @@ use quote::quote;
 use syn::parse_macro_input;
 
 mod client;
+mod mock;
 mod stub;
 
 /// Implements server side interface for the Dapr service
@@ -27,11 +28,17 @@ pub fn service(_args: TokenStream, input: TokenStream) -> TokenStream {
 pub fn stub(_args: TokenStream, input: TokenStream) -> TokenStream {
     let item = parse_macro_input!(input as syn::ItemTrait);
     let stub = stub::dapr_stub(&item);
+    let mock = if cfg!(feature = "mocking") {
+        Some(mock::dapr_mock(&item))
+    } else {
+        None
+    };
     let async_trait = stub::async_trait(item);
 
     let expanded = quote! {
         #async_trait
         #stub
+        #mock
     };
     if std::env::var_os("DUMP_STUB").is_some() {
         println!("{}", rustfmt(expanded.to_string()));

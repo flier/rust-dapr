@@ -11,6 +11,10 @@ pub extern crate serde;
 #[doc(hidden)]
 pub extern crate tonic;
 
+#[cfg(feature = "mocking")]
+#[macro_use]
+pub extern crate simulacrum;
+
 #[doc(hidden)]
 pub use async_trait::async_trait;
 pub use dapr_derive::{service, stub};

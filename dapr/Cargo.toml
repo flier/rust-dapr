@@ -12,8 +12,9 @@ categories = ["api-bindings", "asynchronous"]
 keywords = ["microservice"]
 
 [features]
-default = ["json"]
+default = ["json", "mocking"]
 json = ["serde", "serde_json"]
+mocking = ["simulacrum", "dapr-derive/mocking"]
 
 [dependencies]
 cfg-if = "0.1"
@@ -28,6 +29,8 @@ prost-derive = "0.5"
 
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
+
+simulacrum = { version = "0.3", optional = true }
 
 dapr-derive = { version = "0.1.0-alpha.2", path = "../dapr-derive" }
 

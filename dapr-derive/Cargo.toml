@@ -11,6 +11,10 @@ readme = "../README.md"
 categories = ["api-bindings", "asynchronous"]
 keywords = ["microservice"]
 
+[features]
+default = []
+mocking = []
+
 [lib]
 proc-macro = true
 

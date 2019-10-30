@@ -129,7 +129,7 @@ pub fn async_trait(item: syn::ItemTrait) -> TokenStream {
     }
 }
 
-fn output_type(output: &syn::ReturnType) -> syn::ReturnType {
+pub fn output_type(output: &syn::ReturnType) -> syn::ReturnType {
     match output {
         syn::ReturnType::Default => {
             parse_quote! {
